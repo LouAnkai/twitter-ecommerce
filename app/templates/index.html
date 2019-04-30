@@ -5,7 +5,11 @@
     <header>
       <div class="row">
         <div class="col-md-12">
-          <h1>Twitter</h1>
+          {% if header != '' %}
+            <h1>{{ header }}</h1>
+          {% else %}
+            <h1>Twitter</h1>
+          {% endif %}
           <img class="banner" src="http://placehold.it/800x150" alt="Banner">
         </div> <!-- ends col 12 -->
       </div> <!-- ends row -->
