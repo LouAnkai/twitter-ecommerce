@@ -30,7 +30,7 @@
 
         {% if title == 'Change Title' %}
           <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('title') }}">Title</a>
+            <a class="nav-link" href="{{ url_for('title') }}">Title<span class="sr-only">(current)</span></a>
           </li>
         {% else %}
           <li class="nav-item">
@@ -40,7 +40,7 @@
 
         {% if title == 'Login' %}
           <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+            <a class="nav-link" href="{{ url_for('login') }}">Login<span class="sr-only">(current)</span></a>
           </li>
         {% else %}
           <li class="nav-item">
@@ -55,6 +55,16 @@
         {% else %}
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+          </li>
+        {% endif %}
+
+        {% if title == 'Contact' %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('contact') }}">Contact<span class="sr-only">(current)</span></a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
           </li>
         {% endif %}
 

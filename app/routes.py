@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, url_for, redirect
-from app.forms import TitleForm, LoginForm, RegisterForm
+from app.forms import TitleForm, LoginForm, RegisterForm, ContactForm
 
 @app.route('/')
 @app.route('/index')
@@ -63,3 +63,13 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('form.html', title='Register', form=form)
+
+@app.route('/contact', methods=['GET','POST'])
+def contact():
+    form = ContactForm()
+
+    if form.validate_on_submit():
+        print('Your contact information has been stored.')
+        return redirect (url_for('index'))
+
+    return render_template('form.html', title='Contact', form=form)
