@@ -1,11 +1,11 @@
-from app import app
-from flask import render_template, url_for, redirect
-from app.forms import TitleForm, LoginForm, RegisterForm
+from app import app, db
+from flask import render_template, url_for, redirect, flash
+from app.forms import TitleForm, LoginForm, RegisterForm, ContactForm
+from app.models import Title
 
 @app.route('/')
 @app.route('/index')
-@app.route('/index/<header>', methods=['GET'])
-def index(header=''):
+def index():
     products = [
             {
                 'id': 1001,
@@ -32,6 +32,9 @@ def index(header=''):
                 'desc': 'Yummy orange juice'
             }
         ]
+
+    header = Title.query.get(1).title
+
     return render_template('index.html', title='Home', products=products, header=header)
 
 @app.route('/title', methods=['GET','POST'])
@@ -40,7 +43,16 @@ def title():
 
     if form.validate_on_submit():
         header = form.title.data
-        return redirect(url_for('index', header=header))
+
+        data = Title.query.get(1)
+        data.title = header
+
+        #add to session and commit
+        db.session.add(data)
+        db.session.commit()
+
+        flash(f'You have changed the title to {header}')
+        return redirect(url_for('index'))
 
     return render_template('form.html', title='Change Title', form=form)
 
@@ -50,7 +62,7 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        print(f'E-mail: {form.email.data} \t Password: {form.password.data}')
+        print(f'E-mail: {form.email.data} \n Password: {form.password.data}')
         return redirect (url_for('index'))
     return render_template('form.html', title='Login', form=form)
 
@@ -59,7 +71,17 @@ def register():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        print('You have been registered!')
+        flash(f'Thanks for registering, an e-mail confirmation has been sent to {form.email.data}')
         return redirect(url_for('login'))
 
     return render_template('form.html', title='Register', form=form)
+
+@app.route('/contact', methods=['GET','POST'])
+def contact():
+    form = ContactForm()
+
+    if form.validate_on_submit():
+        flash(f'Thanks for your submission, we will contact your shortly. A copy has been sent to {form.email.data}')
+        return redirect(url_for('index'))
+
+    return render_template('form.html', form=form, title='Contact Us')

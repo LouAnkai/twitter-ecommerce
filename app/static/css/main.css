@@ -36,6 +36,12 @@ body {
   font-style: italic;
 }
 
+.error {
+  color: red;
+  font-weight: bold;
+  font-size: 85%
+}
+
 .card>button {
   display: block;
   margin: 15px auto;
