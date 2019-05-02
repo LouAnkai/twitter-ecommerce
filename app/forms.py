@@ -28,3 +28,7 @@ class ContactForm(FlaskForm):
     email = StringField('E-mail', validators=[DataRequired(), Email()])
     message = TextAreaField('Message', validators=[DataRequired(), length(max=500)])
     submit = SubmitField('Contact')
+
+class PostForm(FlaskForm):
+    tweet = StringField('What are you doing?', validators=[DataRequired(), length(max=140)])
+    submit = SubmitField('Tweet')
