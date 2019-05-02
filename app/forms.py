@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, IntegerField, TextAreaField
-from wtforms.validators import DataRequired, Email, EqualTo, length
+from wtforms.validators import DataRequired, Email, EqualTo, length, ValidationError
+from app.models import User
+from flask import flash
 
 class TitleForm(FlaskForm):
     title = StringField('What should the title say?', validators=[DataRequired()])
@@ -22,6 +24,18 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField('Re-type Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None:
+            flash('Sorry but those credentials are already in use')
+            raise ValidationError('Use a different username/email.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            flash('Sorry but those credentials are already in use')
+            raise ValidationError('Use a different username/email.')
 
 class ContactForm(FlaskForm):
     name = StringField('Full Name')

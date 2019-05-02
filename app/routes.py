@@ -1,7 +1,8 @@
 from app import app, db
 from flask import render_template, url_for, redirect, flash
 from app.forms import TitleForm, LoginForm, RegisterForm, ContactForm, PostForm
-from app.models import Title, Contact, Post
+from app.models import Title, Contact, Post, User
+from flask_login import current_user
 
 @app.route('/')
 @app.route('/index')
@@ -70,7 +71,28 @@ def login():
 def register():
     form = RegisterForm()
 
+    # check to see if the user is already logged in, if so send to index
+    if current_user.is_authenticated:
+        flash('You are already logged in.')
+        return redirect(url_for('index'))
+
     if form.validate_on_submit():
+        user = User(
+            first_name = form.first_name.data,
+            last_name = form.last_name.data,
+            username = form.username.data,
+            email = form.email.data,
+            url = form.url.data,
+            age = form.age.data,
+            bio = form.bio.data
+        )
+
+        # call set password to create hash
+        user.set_password(form.password.data)
+
+        db.session.add(user)
+        db.session.commit()
+
         flash(f'Thanks for registering, an e-mail confirmation has been sent to {form.email.data}')
         return redirect(url_for('login'))
 
