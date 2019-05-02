@@ -1,8 +1,8 @@
-from app import app, db
+from app import app, db, login
 from flask import render_template, url_for, redirect, flash
 from app.forms import TitleForm, LoginForm, RegisterForm, ContactForm, PostForm
 from app.models import Title, Contact, Post, User
-from flask_login import current_user
+from flask_login import current_user, login_user, logout_user
 
 @app.route('/')
 @app.route('/index')
@@ -62,9 +62,26 @@ def title():
 def login():
     form = LoginForm()
 
+    # if user is already logged in, send them to the profile page
+    if current_user.is_authenticated:
+        flash('You are already logged in!')
+        return redirect(url_for('index'))
+
     if form.validate_on_submit():
-        print(f'E-mail: {form.email.data} \n Password: {form.password.data}')
-        return redirect (url_for('index'))
+        # query the database for the user trying to login
+        user = User.query.filter_by(email=form.email.data).first()
+
+        # if user doesn't exist, reload the page and flash Message
+        # or if the password doesn't match the password stored
+        if user is None or not user.check_password(form.password.data):
+            flash('Credentials are incorrect')
+            return redirect(url_for('login'))
+
+        # if user does exist, and credentials are correct, log them in and send them to their profile page
+        login_user(user)
+        flash('You are now logged in!')
+        return redirect (url_for('profile', username=user.username))
+
     return render_template('form.html', title='Login', form=form)
 
 @app.route('/register', methods=['GET','POST'])
@@ -122,16 +139,24 @@ def contact():
 
     return render_template('form.html', form=form, title='Contact Us')
 
-@app.route('/profile', methods=['GET','POST'])
-def profile():
+@app.route('/profile/<username>', methods=['GET','POST'])
+def profile(username=''):
     form = PostForm()
 
-    posts = Post.query.all()
+    #posts = Post.query.all()
+
+    user = User.query.filter_by(username=username).first()
 
     if form.validate_on_submit():
-        post = Post(tweet=form.tweet.data)
+        post = Post(tweet=form.tweet.data, user_id=user.id)
         db.session.add(post)
         db.session.commit()
-        return redirect(url_for('profile'))
+        return redirect(url_for('profile', username=user.username))
 
-    return render_template('profile.html', title='Profile', form=form, posts=posts)
+    return render_template('profile.html', title='Profile', form=form, user=user)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('You have been logged out!')
+    return redirect(url_for('login'))
