@@ -17,9 +17,13 @@
           </div>
         </div> <!-- ends col 4 -->
         <div class="col-md-8">
-          <div class="card">
-            {{ wtf.quick_form(form) }}
-          </div> <!-- ends card for form -->
+
+          <!-- only show form if current logged in user is user's profile -->
+          {% if current_user.username == user.username %}
+            <div class="card">
+              {{ wtf.quick_form(form) }}
+            </div> <!-- ends card for form -->
+          {% endif %}
 
           <!-- TODO: Loop over this card for tweets -->
           {% for post in user.posts[::-1] %}

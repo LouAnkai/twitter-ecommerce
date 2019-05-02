@@ -1,15 +1,11 @@
 {% extends 'bootstrap/base.html' %}
-
-
 {% block styles %}
   {{ super() }}
   <link rel="stylesheet" href="../static/css/main.css">
 {% endblock %}
-
 {% block title %}
   {{ title }} - Twitter
 {% endblock %}
-
 {% block navbar %}
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="{{ url_for('index') }}">Twitter</a>
@@ -27,28 +23,28 @@
             <a class="nav-link" href="{{ url_for('index') }}">Home</a>
           </li>
         {% endif %}
-
         {% if title == 'Change Title' %}
           <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('title') }}">Title</a>
-          </li>
         {% else %}
           <li class="nav-item">
+        {% endif %}
             <a class="nav-link" href="{{ url_for('title') }}">Title</a>
           </li>
+        {% if title == 'Checkout' %}
+          <li class="nav-item active">
+        {% else %}
+          <li class="nav-item">
         {% endif %}
-
+            <a class="nav-link" href="{{ url_for('checkout') }}">Checkout</a>
+          </li>
         {% if not current_user.is_authenticated %}
           {% if title == 'Login' %}
             <li class="nav-item active">
-              <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-            </li>
           {% else %}
             <li class="nav-item">
+          {% endif %}
               <a class="nav-link" href="{{ url_for('login') }}">Login</a>
             </li>
-          {% endif %}
-
           {% if title == 'Register' %}
             <li class="nav-item active">
           {% else %}
@@ -56,21 +52,18 @@
           {% endif %}
               <a class="nav-link" href="{{ url_for('register') }}">Register</a>
             </li>
-
         {% else %}
           {% if title == 'Profile' %}
             <li class="nav-item active">
           {% else %}
             <li class="nav-item">
           {% endif %}
-              <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+              <a class="nav-link" href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
             </li>
-
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
           </li>
         {% endif %}
-
         {% if title == 'Contact Us' %}
           <li class="nav-item active">
         {% else %}
@@ -78,12 +71,10 @@
         {% endif %}
             <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
           </li>
-
       </ul>
     </div>
   </nav>
 {% endblock %}
-
 {% block content %}
   <!-- show flash messages via an alert box -->
   {% with messages = get_flashed_messages() %}
@@ -97,7 +88,6 @@
   {% endwith %}
   <!-- all template files will render within block app content -->
   {% block app_content %}{% endblock %}
-
   <footer>
     <div class="row">
       <div class="col-md-4">
